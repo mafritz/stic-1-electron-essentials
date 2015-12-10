@@ -6,11 +6,10 @@
 </head>
 <body>
     <h1>Score</h1>
-    <p>Write in the ./my_files/score.txt file the number of addition resolved and the total number of attempts</p>
-    <p>Resolve this addition : <span id="firstNumber"></span> + <span id="secondNumber"></span></p>
+    <h3>Resolve this addition : <span id="firstNumber"></span> + <span id="secondNumber"></span></h3>
     <p>What is the result?</p>
     <input type="number" id="myResult"> <button id="myBtn">Submit</button>
-    <p>So far you have resolved <span id="totResolved"></span> out of <span id="totAttempts"></span></p>
+    <h4>So far you have resolved <span id="totResolved"></span> out of <span id="totAttempts"></span> additions.</h4>
 <script>
 //Include file system module
 var fs = require('fs');
@@ -32,6 +31,7 @@ var expectedResult;
 function readScore() {
     fs.readFile('./my_files/score.txt', 'utf8', function (error, content) {
         if (error) throw error;
+        //Obtain the score from the first number and the total attempts from the second and display them in the associated span
         var array = content.split(",");
         totResolvedText.innerHTML = array[0];
         totAttemptsText.innerHTML = array[1];
@@ -40,9 +40,12 @@ function readScore() {
     
 //Function to generate a random addition
 function generateAddition () {
+    //Generate two random numbers from 1 to 100
     firstNumber = Math.ceil(Math.random() * 100);
     secondNumber = Math.ceil(Math.random() * 100);
+    //Calculate the result that the user must compute
     expectedResult = firstNumber + secondNumber;
+    //Display the numbers in the associated span
     firstNumberText.innerHTML = firstNumber;
     secondNumberText.innerHTML = secondNumber;
 }
@@ -55,16 +58,21 @@ window.onload = function () {
     generateAddition();
     //Control the result
     btn.onclick = function () {
+        //Retrieve the current score and attempts from the page
         var currentScore = parseInt(totResolvedText.innerHTML);
         var currentAttempts = parseInt(totAttemptsText.innerHTML);
+        //Increment the good guesses if the result given by the user matches the expected result
         if(myResult.value == expectedResult) {
             currentScore++;
         }
+        //Increment the attemps in any case
         currentAttempts++;
+        //Write the new score, update the interface a generate a new addition to resolve
         fs.writeFile('./my_files/score.txt', currentScore + "," + currentAttempts, function (error) {
             if (error) throw error;
             readScore();
             generateAddition();
+            //Reset the result text input for the user to provide a new one
             myResult.value = '';
         });
     }

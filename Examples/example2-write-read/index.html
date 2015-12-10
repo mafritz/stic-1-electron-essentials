@@ -2,10 +2,10 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>Mes notes STIC I</title>
+        <title>My STIC I grades</title>
     </head>
     <body>
-        <h1>Mes notes STIC I</h1>
+        <h1>My STIC I grades</h1>
         <h3>Add a note</h3>
         <select id="ex">
             <option value="1">Exercice 1</option>
@@ -16,62 +16,68 @@
             <option value="6">Exercice 6</option>
         </select>
         <input type="number" min="0" max="6" step="0.25" id="note">
-        <button id="myBtn">Ajouter</button>
+        <button id="myBtn">Add</button>
         <div id="feedback"></div>
         <h3>Mes notes</h3>
         <ul id="mesNotes">
-          <!-- Liste générée dynamiquement en lisant le fichier des notes ./my_files/notes.txt -->
+          <!-- Dynamically generated list from the ./my_files/notes.txt file -->
         </ul>
     </body>
 <script>
-//Inclure le module fs
+//Include the File System module
 var fs = require('fs');
     
-//Identifier les éléments dans le DOM
+//Identify the DOM elements
 var ex = document.getElementById("ex");
 var note = document.getElementById("note");
 var btn = document.getElementById("myBtn");
 var liste = document.getElementById("mesNotes");
 var feedback = document.getElementById("feedback");
     
-//Lire le contenu du fichier ./my_files/notes.txt et afficher les notes
+//Function that reads the content of the ./my_files/notes.txt file and display the grades for each exercice
+//Grades as stored in the file as follow :
+//ExercieNumber,Grade
+//Example
+//1,4.5
+//2,5.5
 function readNotes () {
-    //Enlever le contenu s'il y en a dans le cas qu'on ajoute une nouvelle note
+    //Reset the content of the list if there is any
     liste.innerHTML = '';
-    //Lire le fichier et ajouter les notes des exercices présents
+    //Read the content of the file and split it in order to obtain "rows" and "cols"
     fs.readFile('./my_files/notes.txt', 'utf8', function (error, data) {
-        //Identifier chaque nouvelle ligne avec \n
+        //Identify "rows" with the \n
         var exercices = data.split('\n');
         exercices.forEach(function (item) {
-            //Contrôler que la ligne ne soit pas vide
+            //Check that the row is not empty
             if(item != '') {
-                //Séparer le numéro de l'exercice de la note avec la virgule
+                //Split the "cols" of the file with the ","
                 var current = item.split(",");
-                //current[0] = numéro exercice et current[1] = note
+                //current[0] = exercice number and current[1] = grade
                 liste.innerHTML += '<li>Exercice ' + current[0] + " : " + current[1] + '</li>';   
             }
         });
     });
 }
     
-//Ajouter une note au fichier
+//Add a new note to the file
 function addNote () {
-    //S'assurer de créer une nouvelle ligne à chaque fois et insérer le numéro de l'ex et la note depuis le formulaire
+    //Be sure to add a new line for each grade and compose the "cols" of the row
     var newLine = "\n" + ex.value + "," + note.value;
+    //Append the content to the file
     fs.appendFile('./my_files/notes.txt', newLine, function (error) {
         if(error) throw error;
-        //Afficher un feedback sur l'opération
+        //Display a feedback that confirms the operation
         feedback.innerHTML = "Last node added at " + new Date().toLocaleTimeString();
-        //Mettre à jour la liste car le fichier vient de changer
+        //Update the list since we added some new content to the file
         readNotes();
     });
 }
 
-//La première fois que l'application est lancée
+//Execute this code the first time that the application is launched
 window.onload = function () {
-    //Lire s'il y a déjà des notes disponibles
+    //Read if there are already some grades in the file
     readNotes();
-    //Lorsqu'on en ajoute une deuxième, appeler la fonction readNotes()
+    //Add a note when we click on the button
     btn.onclick = function () {
         addNote();
     }
