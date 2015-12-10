@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Hello World!</title>
+</head>
+<body>
+    <h1>Score</h1>
+    <p>Write in the ./my_files/score.txt file the number of addition resolved and the total number of attempts</p>
+    <p>Resolve this addition : <span id="firstNumber"></span> + <span id="secondNumber"></span></p>
+    <p>What is the result?</p>
+    <input type="number" id="myResult"> <button id="myBtn">Submit</button>
+    <p>So far you have resolved <span id="totResolved"></span> out of <span id="totAttempts"></span></p>
+<script>
+//Include file system module
+var fs = require('fs');
+    
+//Identify DOM elements
+var firstNumberText = document.getElementById("firstNumber");
+var secondNumberText = document.getElementById("secondNumber");
+var myResult = document.getElementById("myResult");
+var btn = document.getElementById("myBtn");
+var totResolvedText = document.getElementById("totResolved");
+var totAttemptsText = document.getElementById("totAttempts");
+
+//Set variables for the additions
+var firstNumber;
+var secondNumber;
+var expectedResult;
+
+//Function to read the score and update the interface
+function readScore() {
+    fs.readFile('./my_files/score.txt', 'utf8', function (error, content) {
+        if (error) throw error;
+        var array = content.split(",");
+        totResolvedText.innerHTML = array[0];
+        totAttemptsText.innerHTML = array[1];
+    });
+}
+    
+//Function to generate a random addition
+function generateAddition () {
+    firstNumber = Math.ceil(Math.random() * 100);
+    secondNumber = Math.ceil(Math.random() * 100);
+    expectedResult = firstNumber + secondNumber;
+    firstNumberText.innerHTML = firstNumber;
+    secondNumberText.innerHTML = secondNumber;
+}
+    
+//Init the application on firt load
+window.onload = function () {
+    //Read the current score
+    readScore();
+    //Generate the first addition to resolve
+    generateAddition();
+    //Control the result
+    btn.onclick = function () {
+        var currentScore = parseInt(totResolvedText.innerHTML);
+        var currentAttempts = parseInt(totAttemptsText.innerHTML);
+        if(myResult.value == expectedResult) {
+            currentScore++;
+        }
+        currentAttempts++;
+        fs.writeFile('./my_files/score.txt', currentScore + "," + currentAttempts, function (error) {
+            if (error) throw error;
+            readScore();
+            generateAddition();
+            myResult.value = '';
+        });
+    }
+}
+</script>
+</body>
+</html>

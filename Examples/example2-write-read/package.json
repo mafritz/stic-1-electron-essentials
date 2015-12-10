@@ -1,0 +1,12 @@
+{
+  "name": "stic-1-electron-essentials",
+  "version": "1.0.0",
+  "description": "Electron workshop based on the electron-quick-start app",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron main.js"
+  },
+  "devDependencies": {
+    "electron-prebuilt": "^0.35.0"
+  }
+}

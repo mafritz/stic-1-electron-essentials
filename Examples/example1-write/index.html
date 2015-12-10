@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Hello World!</title>
+    </head>
+    <body>
+        <h1>Write content in a file</h1>
+        <input type="text" id="myContent"> <button id="myBtn">Write to file</button>
+        <div id="feedback"></div>
+    </body>
+<script>
+//Include fs module
+var fs = require('fs');
+    
+//Identify elements in the DOM
+var content = document.getElementById("myContent");
+var btn = document.getElementById("myBtn");
+var feedback = document.getElementById("feedback");
+
+//Write content when the user click on the button in the ./my_files/file.txt file
+btn.onclick = function () {
+    fs.writeFile('./my_files/file.txt', content.value, function (error) {
+        if (error) throw error;
+        feedback.innerHTML = "File saved at " + new Date().toLocaleTimeString();
+    });
+}
+</script>
+</html>

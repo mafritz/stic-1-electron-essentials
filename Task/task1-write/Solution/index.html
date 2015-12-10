@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Hello World!</title>
+</head>
+<body>
+    <h1>Write challenge</h1>
+    <p>Write the content of the following textarea to ./my_files/file.txt and display a "It's done!" message when is done</p>
+    <textarea id="myTextarea" cols="50" rows="10"></textarea><br>
+    <button id="myBtn">Save</button>
+    <div id="feedback"></div>
+<script>
+//Include File System module
+var fs = require('fs');
+
+//Identify elements in the DOM
+var textArea = document.getElementById("myTextarea");
+var btn = document.getElementById("myBtn");
+var feedback = document.getElementById("feedback");
+    
+//Save the content
+btn.onclick = function () {
+    fs.writeFile('./my_files/file.txt', textArea.value, function (error) {
+        if (error) throw error;
+        feedback.innerHTML = "It's done!";
+    })
+}
+</script>
+</body>
+</html>

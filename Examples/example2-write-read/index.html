@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Mes notes STIC I</title>
+    </head>
+    <body>
+        <h1>Mes notes STIC I</h1>
+        <h3>Add a note</h3>
+        <select id="ex">
+            <option value="1">Exercice 1</option>
+            <option value="2">Exercice 2</option>
+            <option value="3">Exercice 3</option>
+            <option value="4">Exercice 4</option>
+            <option value="5">Exercice 5</option>
+            <option value="6">Exercice 6</option>
+        </select>
+        <input type="number" min="0" max="6" step="0.25" id="note">
+        <button id="myBtn">Ajouter</button>
+        <div id="feedback"></div>
+        <h3>Mes notes</h3>
+        <ul id="mesNotes">
+          <!-- Liste générée dynamiquement en lisant le fichier des notes ./my_files/notes.txt -->
+        </ul>
+    </body>
+<script>
+//Inclure le module fs
+var fs = require('fs');
+    
+//Identifier les éléments dans le DOM
+var ex = document.getElementById("ex");
+var note = document.getElementById("note");
+var btn = document.getElementById("myBtn");
+var liste = document.getElementById("mesNotes");
+var feedback = document.getElementById("feedback");
+    
+//Lire le contenu du fichier ./my_files/notes.txt et afficher les notes
+function readNotes () {
+    //Enlever le contenu s'il y en a dans le cas qu'on ajoute une nouvelle note
+    liste.innerHTML = '';
+    //Lire le fichier et ajouter les notes des exercices présents
+    fs.readFile('./my_files/notes.txt', 'utf8', function (error, data) {
+        //Identifier chaque nouvelle ligne avec \n
+        var exercices = data.split('\n');
+        exercices.forEach(function (item) {
+            //Contrôler que la ligne ne soit pas vide
+            if(item != '') {
+                //Séparer le numéro de l'exercice de la note avec la virgule
+                var current = item.split(",");
+                //current[0] = numéro exercice et current[1] = note
+                liste.innerHTML += '<li>Exercice ' + current[0] + " : " + current[1] + '</li>';   
+            }
+        });
+    });
+}
+    
+//Ajouter une note au fichier
+function addNote () {
+    //S'assurer de créer une nouvelle ligne à chaque fois et insérer le numéro de l'ex et la note depuis le formulaire
+    var newLine = "\n" + ex.value + "," + note.value;
+    fs.appendFile('./my_files/notes.txt', newLine, function (error) {
+        if(error) throw error;
+        //Afficher un feedback sur l'opération
+        feedback.innerHTML = "Last node added at " + new Date().toLocaleTimeString();
+        //Mettre à jour la liste car le fichier vient de changer
+        readNotes();
+    });
+}
+
+//La première fois que l'application est lancée
+window.onload = function () {
+    //Lire s'il y a déjà des notes disponibles
+    readNotes();
+    //Lorsqu'on en ajoute une deuxième, appeler la fonction readNotes()
+    btn.onclick = function () {
+        addNote();
+    }
+}
+</script>
+</html>
